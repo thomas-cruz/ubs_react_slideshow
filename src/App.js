@@ -1,4 +1,4 @@
-import React, { Fragment, useState } from 'react'
+import React, { Fragment, useCallback, useState } from 'react'
 import 'h8k-components'
 
 import { image1, image2, image3, image4 } from './assets/images'
@@ -31,25 +31,25 @@ function App() {
   const [ slideTimer, setSlideTimer ] = useState(null)
   const [ slideDuration ] = useState(3000)
 
-  const onNext = () => {
-    if (activeIndex + 1 >= catalogs.length) {
-      setActiveIndex(0);
-    } else {
-      setActiveIndex((prev) => prev + 1);
-    }
-  };
+  const onNext = useCallback(() => {
+    setActiveIndex((prev) => {
+      let nextIndex = prev + 1;
+      if (nextIndex >= catalogs.length) {
+        nextIndex = 0;
+      }
+      return nextIndex;
+    });
+  }, [catalogs]);
 
-  const onPrev = () => {
-    if (activeIndex === 0) {
-      setActiveIndex(catalogs.length - 1);
-    } else {
-      setActiveIndex((prev) => prev - 1);
-    }
-  };
+  const onPrev = useCallback(() => {
+    setActiveIndex((prev) => {
+      if (prev === 0) return catalogs.length - 1;
+      return prev - 1;
+    });
+  }, [catalogs]);
 
-  const onToggleStartSlideShow = (e) => {
+  const onToggleStartSlideShow = useCallback((e) => {
     const isChecked = e.target.checked;
-    console.log({isChecked})
     if (!isChecked) {
       clearInterval(slideTimer);
       setSlideTimer(null);
@@ -59,7 +59,7 @@ function App() {
       }, slideDuration);
       setSlideTimer(timer);
     }
-  };
+  }, [slideTimer, slideDuration, onNext]);
 
   return (
     <Fragment>
