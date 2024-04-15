@@ -31,6 +31,36 @@ function App() {
   const [ slideTimer, setSlideTimer ] = useState(null)
   const [ slideDuration ] = useState(3000)
 
+  const onNext = () => {
+    if (activeIndex + 1 >= catalogs.length) {
+      setActiveIndex(0);
+    } else {
+      setActiveIndex((prev) => prev + 1);
+    }
+  };
+
+  const onPrev = () => {
+    if (activeIndex === 0) {
+      setActiveIndex(catalogs.length - 1);
+    } else {
+      setActiveIndex((prev) => prev - 1);
+    }
+  };
+
+  const onToggleStartSlideShow = (e) => {
+    const isChecked = e.target.checked;
+    console.log({isChecked})
+    if (!isChecked) {
+      clearInterval(slideTimer);
+      setSlideTimer(null);
+    } else {
+      const timer = setInterval(() => {
+        onNext();
+      }, slideDuration);
+      setSlideTimer(timer);
+    }
+  };
+
   return (
     <Fragment>
       <h8k-navbar header={ title }></h8k-navbar>
@@ -42,6 +72,7 @@ function App() {
             <button 
               className="icon-only outlined"
               data-testid="prev-slide-btn"
+              onClick={onPrev}
             >
               <i className="material-icons">arrow_back</i>
             </button>
@@ -52,6 +83,7 @@ function App() {
             <button 
               className="icon-only outlined"
               data-testid="next-slide-btn"
+              onClick={onNext}
             >
               <i className="material-icons">arrow_forward</i>
             </button>
@@ -62,6 +94,7 @@ function App() {
           <input 
             type='checkbox'
             data-testid='toggle-slide-show-button'
+            onChange={onToggleStartSlideShow}
           /> 
           <label className='ml-6'>Start Slide Show</label>
         </div>
